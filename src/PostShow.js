@@ -1,74 +1,33 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Link } from 'react-router-dom'
+import { Card, CardImg, CardTitle, CardText } from 'reactstrap';
+import POST from './post.jpg'
 
 
-class PostShow extends React.Component {
-
-    constructor(){
-        super()
-        this.state = {
-            post: {},
-            user: {},
-            comments: []
-        }
-    }
-    
-    componentDidMount() {
-        const id = this.props.match.params.id
-        
+const  PostShow = ({id}) => {
+    const [post, setPost] = useState(null);
+    useEffect(() => {
         axios.get(`https://jsonplaceholder.typicode.com/posts/${id}`)
         .then((response) => {
-            //console.log(response)
-        const post = response.data
-         console.log(post)
-        this.setState({post})
-        // 
-        axios.get(`http://jsonplaceholder.typicode.com/users/${post.userId}`)
-        .then((response) => {
-            //console.log(response.data)
-            const user = response.data
-            console.log(user)
-            this.setState({ user })
+            const post = response.data
+            setPost(post)
         })
-        })
-        
+    }, [id]);
 
-        axios.get(`https://jsonplaceholder.typicode.com/comments?postId=${id}`)
-        .then((response) => {
-            console.log(response.data)
-        const comments = response.data
-        this.setState({
-            comments
-            })
-        })
-    }	
-
-    render() {
-        console.log('user show component', this.props)
         return (
             <div>
-                <h1>USER NAME - {this.state.user.name} </h1>
-                <h1>TITLE: {this.state.post.title} </h1>
-                <h2>BODY: {this.state.post.body} </h2>
-                <hr/>
-
-                <h1>COMMENTS</h1>
-                <ul>
-                {
-                    this.state.comments.map(function(comment){
-                        return <li key= {comment.id}> {comment.body} </li>
-                    })
-                }
-
-               </ul><hr/>
-
-                <p> <Link to={`/users/${this.state.post.id}`}> More Posts from Author: {this.state.user.name} </Link> </p>
+                <Card style={{marginTop: "55px"}}>
+                    {post != null && <>
+                        <CardTitle className="text-center text-light" style={{fontSize: "25px", backgroundColor: "gray"}}><b>Post-Title:-</b> {post.title} </CardTitle>
+                        <CardImg style={{height: "400px"}} top width="100%" src={POST} alt="Card image cap" />
+                        <CardText className="text-center mt-2" style={{fontSize: "25px", backgroundColor: "light"}}><b>Post-Body:-</b> {post.body} </CardText>
+                    </>}
+                    <hr/>
+                </Card>
+                
                 
             </div>
         )
-    }
-
-    
 }
-export default PostShow
+
+export default PostShow;

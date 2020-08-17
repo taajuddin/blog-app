@@ -1,0 +1,11 @@
+.sticky{
+    position: -webkit-sticky; 
+     position: sticky; 
+    top: 0;
+    padding: 0px;
+    font-size: 0px;
+}
+.scroll {
+    max-height: 600px;
+    overflow-y: auto;
+}

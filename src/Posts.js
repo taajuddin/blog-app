@@ -1,40 +1,45 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Link } from 'react-router-dom'
+import { Card, CardTitle } from 'reactstrap';
+import PostShow from './PostShow'
 
-class Users extends React.Component {
-    constructor() {
-    super()
-    this.state = {
-        posts: []	
-    }
-    } 
-    componentDidMount() {
+const FlexBox = ({ row, children }) => <div style={{ display: 'flex', flexDirection: row ? 'row' : 'column', ...(row ? { flex: 1 } : {}) }}>
+    {children}
+</div>
+
+const Users = () => {
+    const [posts, setPosts] = useState([]);
+    const [selected, setSelected] = useState(null);
+
+    useEffect( () => {
         axios.get('https://jsonplaceholder.typicode.com/posts')
         .then((response) => {
             console.log(response)
-        const posts = response.data
-        this.setState({
-            posts
-            })
+            setPosts(response.data);
         })
-    }
+    }, []);
 
-    render() {
         return (
-          <div>
-              <h1>Total Posts- {this.state.posts.length}</h1>
-               <ul>
-                {
-                    this.state.posts.map(function(post){
-                        return <li key= {post.id}> <Link to={`/posts/${post.id}`}>{post.title} </Link> </li>
-                    })
-                }
+            <FlexBox row>
+                <div style={{ minWidth: '300px', background: 'light' }}>
+                    <h1 className="text-center">Posts - {posts.length}</h1>
+                    <Card className="scroll">
+                    {
+                        posts.map(function (post) {
+                            return <CardTitle className="border text-primary " key={post.id} id={post.id} onClick = {e => setSelected(post.id)}>{post.title}</CardTitle>
+                        })
+                    }
+                    </Card>
+                </div>
 
-               </ul>
-          </div>
+                <div>
+                    {
+                        selected != null && <PostShow id={selected} />
+                    }
+                    
+                </div>
+            </FlexBox>
         )
-    }
 }
 
 export default Users
